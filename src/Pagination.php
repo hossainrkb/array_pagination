@@ -343,73 +343,24 @@ class Pagination
            $next_page_url = ($current_page_number<$total_page)?$this->makePageUrl($_SERVER['PHP_SELF'],$query_string_name,$current_page_number+1) :null;
            $prev_page_url = ($current_page_number>1 && $current_page_number<= $total_page)?$this->makePageUrl($_SERVER['PHP_SELF'],$query_string_name,$current_page_number-1) :null;
             //temporary start
-            $linkArray = [];
-            $linkArray2 = [];
-            $linkArray3 = [];
-            $base_show_index = 5;
-            if($current_page_number>$total_page || $current_page_number<1 ){
-                return null;
-            }
-            // for ($hola =1;$hola<=$total_page;$hola++){
-                // $current_page_number
-                    array_push($linkArray,1);
-                    array_push($linkArray,2);
-                    array_push($linkArray,"head");
-                    array_push($linkArray,$total_page-1);
-                    array_push($linkArray,$total_page);
-                   
-                    array_push($linkArray3,1);
-                    array_push($linkArray3,2);
-                    array_push($linkArray3,"head");
-                    array_push($linkArray3,$total_page-1);
-                    array_push($linkArray3,$total_page);
-                  
-                    foreach ($linkArray as $key => $value) {
-                        if($value == "head"){
-
-                            $linkArray[$key]= $current_page_number;
-                            if($linkArray[$key] -$linkArray[$key-1] >2 ){
-                                array_push($linkArray2 , "...");
-                                array_push($linkArray2 , $current_page_number -2);
-                                array_push($linkArray2 , $current_page_number -1);
-                            }
-                            array_push($linkArray2 , $current_page_number);
-                            if($linkArray[$key+1] -$linkArray[$key] >2 ){
-                                array_push($linkArray2 , $current_page_number +1);
-                                array_push($linkArray2 , $current_page_number +2);
-                                array_push($linkArray2 , "...");
-                                // array_push($linkArray2 , $current_page_number);
-                                }
-                            }else{
-                                
-                                array_push($linkArray2,$value);
-                        }
-                    }
-                    if(in_array($current_page_number,$linkArray3)){
-                        //   return json_encode($linkArray);
-                        // return "hola";
-                       return json_encode(array_unique($linkArray2));
-                    }
-                    
-            // }
-            return json_encode($linkArray2);
+           
             //temporary end
-           // return   json_encode([
-            //     'link' => [
-            //         'data'=>($data),
-            //         'current_page' => (int)$current_page_number,
-            //         "first_page_url" => $_SERVER['PHP_SELF'] . "?page=" . 1,
-            //         "from" => $from,
-            //         "last_page" => $total_page,
-            //         "last_page_url" => $last_page_url,
-            //         "next_page_url" => $next_page_url,
-            //         "path" => $_SERVER['PHP_SELF'],
-            //         "per_page" => $per_page,
-            //         "prev_page_url" =>$prev_page_url,
-            //         "to" => $to,
-            //         "total" => $array_length,
-            //     ],
-            // ]);
+           return   json_encode([
+                'link' => [
+                    'data'=>($data),
+                    'current_page' => (int)$current_page_number,
+                    "first_page_url" => $_SERVER['PHP_SELF'] . "?page=" . 1,
+                    "from" => $from,
+                    "last_page" => $total_page,
+                    "last_page_url" => $last_page_url,
+                    "next_page_url" => $next_page_url,
+                    "path" => $_SERVER['PHP_SELF'],
+                    "per_page" => $per_page,
+                    "prev_page_url" =>$prev_page_url,
+                    "to" => $to,
+                    "total" => $array_length,
+                ],
+            ]);
             // echo json_encode(explode("+XX+",$query_string_check)[1]);
         } else {
             echo "dd";
@@ -462,7 +413,67 @@ class Pagination
                 }
             }
     }
+
+    public function get_pagination_list(Array $arr,$per_page,$query_string_name){
+        $linkArray = [];
+        $linkArray2 = [];
+        $linkArray3 = [];
+        $base_show_index = 5;
+        $query_string_name = $query_string_name??self::DEFAULT_QUERY_STRING_NAME;
+        $query_string_check = $this->find_query_string($query_string_name);
+        $current_page_number = explode(self::DEFAULT_DIFF_QUERY_STRING_AND_CURRENT_PAGE, $query_string_check)[1];
+        $per_page = $per_page??self::DEFAULT_PER_PAGE;
+        $array_length = $this->array_length($arr);
+        $total_page = $this->total_page($array_length,$per_page);
+        if($current_page_number>$total_page || $current_page_number<1 ){
+            return null;
+        }
+        // for ($hola =1;$hola<=$total_page;$hola++){
+            // $current_page_number
+                array_push($linkArray,1);
+                array_push($linkArray,2);
+                array_push($linkArray,"head");
+                array_push($linkArray,$total_page-1);
+                array_push($linkArray,$total_page);
+               
+                array_push($linkArray3,1);
+                array_push($linkArray3,2);
+                array_push($linkArray3,"head");
+                array_push($linkArray3,$total_page-1);
+                array_push($linkArray3,$total_page);
+              
+                foreach ($linkArray as $key => $value) {
+                    if($value == "head"){
+
+                        $linkArray[$key]= $current_page_number;
+                        if($linkArray[$key] -$linkArray[$key-1] >2 ){
+                            array_push($linkArray2 , "...");
+                            array_push($linkArray2 , $current_page_number -2);
+                            array_push($linkArray2 , $current_page_number -1);
+                        }
+                        array_push($linkArray2 , $current_page_number);
+                        if($linkArray[$key+1] -$linkArray[$key] >2 ){
+                            array_push($linkArray2 , $current_page_number +1);
+                            array_push($linkArray2 , $current_page_number +2);
+                            array_push($linkArray2 , "...");
+                            // array_push($linkArray2 , $current_page_number);
+                            }
+                        }else{
+                            
+                            array_push($linkArray2,$value);
+                    }
+                }
+                if(in_array($current_page_number,$linkArray3)){
+                    //   return json_encode($linkArray);
+                    // return "hola";
+                   return json_encode(array_unique($linkArray2));
+                }
+                
+        // }
+        return json_encode($linkArray2);
+    }
 }
 
 $obj = new Pagination();
-echo $obj->paginator(null,30,"ki_vai");
+echo $obj->paginator(null,12,"ki_vai");
+// echo $obj->get_pagination_list($obj->ar,12,"ki_vai");
